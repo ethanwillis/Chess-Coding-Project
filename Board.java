@@ -1,0 +1,205 @@
+public class Board {    
+    private Square[][] board = new Square[8][8];
+
+    public Board() {
+        initializeBoard();
+    }
+
+    private void initializeBoard() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                // when initializing the board, each square is
+                // to be set as empty, and the piece equal to null
+                board[i][j] = (new Square(i,j,true,null));
+            }
+        }
+    }
+
+    // setupBoard() puts the pieces in their original starting positions
+    public void setupBoard() {
+        // first, the pawns
+        for (int x = 0; x < 8; x++) {
+            // for white
+            board[x][1] = (new Square(x,1,false,(new Pawn(x,1))));
+            // for black
+            board[x][6] = (new Square(x,1,false,(new Pawn(x,6))));
+        }
+
+        // white's other pieces
+        board[0][0] = (new Square(0,0,false,(new Rook(0,0))));
+        board[1][0] = (new Square(1,0,false,(new Knight(1,0))));
+        board[2][0] = (new Square(2,0,false,(new Bishop(2,0))));
+        board[3][0] = (new Square(3,0,false,(new Queen(3,0))));
+        board[4][0] = (new Square(4,0,false,(new King(4,0))));
+        board[5][0] = (new Square(5,0,false,(new Bishop(5,0))));
+        board[6][0] = (new Square(6,0,false,(new Knight(6,0))));
+        board[7][0] = (new Square(7,0,false,(new Rook(7,0))));
+
+        // black's other pieces
+        board[0][7] = (new Square(0,7,false,(new Rook(0,7))));
+        board[1][7] = (new Square(1,7,false,(new Knight(1,7))));
+        board[2][7] = (new Square(2,7,false,(new Bishop(2,7))));
+        board[3][7] = (new Square(3,7,false,(new Queen(3,7))));
+        board[4][7] = (new Square(4,7,false,(new King(4,7))));
+        board[5][7] = (new Square(5,7,false,(new Bishop(5,7))));
+        board[6][7] = (new Square(6,7,false,(new Knight(6,7))));
+        board[7][7] = (new Square(7,7,false,(new Rook(7,7))));
+    }
+    
+    // wrapper for addPiece(x,y,piece) method
+    public void addPiece() {
+        Piece piece = null;
+        
+        String pieceType = javax.swing.JOptionPane.showInputDialog("What piece would you like to add?");
+        String coordinate = javax.swing.JOptionPane.showInputDialog("Where would you like to add it?");
+        
+        int[] coordinates = determineCoordinate(coordinate);
+        int x = coordinates[0];
+        int y = coordinates[1];
+        
+        if (pieceType.equalsIgnoreCase("Pawn")) {
+            piece = new Pawn(x,y);
+        }
+        else if (pieceType.equalsIgnoreCase("Knight")) {
+            piece = new Knight(x,y);
+        }
+        else if (pieceType.equalsIgnoreCase("Bishop")) {
+            piece = new Bishop(x,y);
+        }
+        else if (pieceType.equalsIgnoreCase("Rook")) {
+            piece = new Rook(x,y);
+        }
+        else if (pieceType.equalsIgnoreCase("Queen")) {
+            piece = new Queen(x,y);
+        }
+        else if (pieceType.equalsIgnoreCase("King")) {
+            piece = new King(x,y);
+        }
+        else {
+            System.out.println("Sorry, something happened. Try entering a Chess piece.");
+            addPiece();
+        }   
+        
+        addPiece(x,y,piece);
+    }
+    
+    private int[] determineCoordinate(String coordinate) {
+        int x = 0;
+        if ((coordinate.charAt(0) == 'a')) {
+            x = 0;
+        }
+        else if ((coordinate.charAt(0) == 'b')) {
+            x = 1;
+        }
+        else if ((coordinate.charAt(0) == 'c')) {
+            x = 2;
+        }
+        else if ((coordinate.charAt(0) == 'd')) {
+            x = 3;
+        }
+        else if ((coordinate.charAt(0) == 'e')) {
+            x = 4;
+        }
+        else if ((coordinate.charAt(0) == 'f')) {
+            x = 5;
+        }
+        else if ((coordinate.charAt(0) == 'g')) {
+            x = 6;
+        }
+        else if ((coordinate.charAt(0) == 'h')) {
+            x = 7;
+        }
+        
+        int y = 0;
+        if (coordinate.charAt(1) == '1') {
+            y = 0;
+        }
+        else if (coordinate.charAt(1) == '2') {
+            y = 1;
+        }
+        else if (coordinate.charAt(1) == '3') {
+            y = 2;
+        }
+        else if (coordinate.charAt(1) == '4') {
+            y = 3;
+        }
+        else if (coordinate.charAt(1) == '5') {
+            y = 4;
+        }
+        else if (coordinate.charAt(1) == '6') {
+            y = 5;
+        }
+        else if (coordinate.charAt(1) == '7') {
+            y = 6;
+        }
+        else if (coordinate.charAt(1) == '8') {
+            y = 7;
+        }
+        
+        int[] coordinates = {x,y};
+        return coordinates;
+    }
+    
+    // addPiece(x,y,piece) adds a piece to the board at the specified (x,y) location
+    private void addPiece(int x, int y, Piece piece) {
+        if (piece == null) {
+            System.out.println("No piece was added.");
+            return;
+        }
+        
+        if ((board[x][y]).isEmpty()) {
+            // if the square is empty, set it equal to the specified piece
+            board[x][y] = (new Square(x,y,false,piece));
+        }
+        else if ((board[x][y]).isEmpty() == false) {
+            System.out.println("\n" + "That square is occupied!" + "\n");
+            return;
+        }
+    }
+    
+    public void removePiece(int x, int y) {
+        board[x][y] = (new Square(x,y,true,null));
+    }
+    
+    public void movePiece(int currentX, int currentY, int moveToX, int moveToY) {
+        if ((board[currentX][currentY]).isEmpty()) {
+            System.out.println("\n" + "There's no piece on that square." + "\n");
+            return;
+        }
+        
+        // pawns
+        if ((board[currentX][currentY]).getPiece() instanceof Pawn) {
+            if (currentX != moveToX) {
+                System.out.println("For now, pawns can only move straight.");
+                return;
+            }
+            
+            if (moveToY > currentY + 1) {
+                System.out.println("For now, pawns can't move more than one square at a time.");
+                return;
+            }
+            removePiece(currentX,currentY);
+            addPiece(moveToX,moveToY, (new Pawn(moveToX,moveToY)));
+        }
+    }
+
+    public void printBoard() {
+        String[] alphabet = {"8","7","6","5","4","3","2","1"};
+        System.out.println("--------------------------------");
+        
+        int i = 7;
+        for (int x = 0; x < 8; x++, i--) {
+            for (int y = 0; y < 8; y++) {
+                if ((board[y][x]).getPiece() != null) {
+                    System.out.print("| " + (board[y][x]).getPiece() + " ");
+                }
+                else {
+                    System.out.print("|  " + " ");
+                }
+            }
+            System.out.println("  " + alphabet[i] + " ");
+            System.out.println("--------------------------------");
+        }
+        System.out.println("  a   b   c   d   e   f   g   h  ");
+    }
+}

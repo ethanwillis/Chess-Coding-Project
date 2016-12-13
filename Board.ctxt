@@ -1,0 +1,20 @@
+#BlueJ class context
+comment0.params=
+comment0.target=Board()
+comment1.params=
+comment1.target=void\ initializeBoard()
+comment2.params=
+comment2.target=void\ setupBoard()
+comment3.params=
+comment3.target=void\ addPiece()
+comment4.params=coordinate
+comment4.target=int[]\ determineCoordinate(java.lang.String)
+comment5.params=x\ y\ piece
+comment5.target=void\ addPiece(int,\ int,\ Piece)
+comment6.params=x\ y
+comment6.target=void\ removePiece(int,\ int)
+comment7.params=currentX\ currentY\ moveToX\ moveToY
+comment7.target=void\ movePiece(int,\ int,\ int,\ int)
+comment8.params=
+comment8.target=void\ printBoard()
+numComments=9
