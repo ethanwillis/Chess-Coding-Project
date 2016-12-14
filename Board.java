@@ -1,3 +1,5 @@
+import java.util.Scanner;
+import javafx.util.Pair;
 public class Board {    
     private Square[][] board = new Square[8][8];
 
@@ -20,69 +22,79 @@ public class Board {
         // first, the pawns
         for (int x = 0; x < 8; x++) {
             // for white
-            board[x][1] = (new Square(x,1,false,(new Pawn(x,1))));
+            board[x][1] = (new Square(x,1,false,(new Pawn(x,1,true))));
             // for black
-            board[x][6] = (new Square(x,1,false,(new Pawn(x,6))));
+            board[x][6] = (new Square(x,1,false,(new Pawn(x,6,false))));
         }
 
         // white's other pieces
-        board[0][0] = (new Square(0,0,false,(new Rook(0,0))));
-        board[1][0] = (new Square(1,0,false,(new Knight(1,0))));
-        board[2][0] = (new Square(2,0,false,(new Bishop(2,0))));
-        board[3][0] = (new Square(3,0,false,(new Queen(3,0))));
-        board[4][0] = (new Square(4,0,false,(new King(4,0))));
-        board[5][0] = (new Square(5,0,false,(new Bishop(5,0))));
-        board[6][0] = (new Square(6,0,false,(new Knight(6,0))));
-        board[7][0] = (new Square(7,0,false,(new Rook(7,0))));
+        board[0][0] = (new Square(0,0,false,(new Rook(0,0,true))));
+        board[1][0] = (new Square(1,0,false,(new Knight(1,0,true))));
+        board[2][0] = (new Square(2,0,false,(new Bishop(2,0,true))));
+        board[3][0] = (new Square(3,0,false,(new Queen(3,0,true))));
+        board[4][0] = (new Square(4,0,false,(new King(4,0,true))));
+        board[5][0] = (new Square(5,0,false,(new Bishop(5,0,true))));
+        board[6][0] = (new Square(6,0,false,(new Knight(6,0,true))));
+        board[7][0] = (new Square(7,0,false,(new Rook(7,0,true))));
 
         // black's other pieces
-        board[0][7] = (new Square(0,7,false,(new Rook(0,7))));
-        board[1][7] = (new Square(1,7,false,(new Knight(1,7))));
-        board[2][7] = (new Square(2,7,false,(new Bishop(2,7))));
-        board[3][7] = (new Square(3,7,false,(new Queen(3,7))));
-        board[4][7] = (new Square(4,7,false,(new King(4,7))));
-        board[5][7] = (new Square(5,7,false,(new Bishop(5,7))));
-        board[6][7] = (new Square(6,7,false,(new Knight(6,7))));
-        board[7][7] = (new Square(7,7,false,(new Rook(7,7))));
+        board[0][7] = (new Square(0,7,false,(new Rook(0,7,false))));
+        board[1][7] = (new Square(1,7,false,(new Knight(1,7,false))));
+        board[2][7] = (new Square(2,7,false,(new Bishop(2,7,false))));
+        board[3][7] = (new Square(3,7,false,(new Queen(3,7,false))));
+        board[4][7] = (new Square(4,7,false,(new King(4,7,false))));
+        board[5][7] = (new Square(5,7,false,(new Bishop(5,7,false))));
+        board[6][7] = (new Square(6,7,false,(new Knight(6,7,false))));
+        board[7][7] = (new Square(7,7,false,(new Rook(7,7,false))));
     }
-    
+
     // wrapper for addPiece(x,y,piece) method
     public void addPiece() {
         Piece piece = null;
+        boolean color = false;
         
         String pieceType = javax.swing.JOptionPane.showInputDialog("What piece would you like to add?");
-        String coordinate = javax.swing.JOptionPane.showInputDialog("Where would you like to add it?");
         
+        String whatColor = javax.swing.JOptionPane.showInputDialog("What color?");
+        if (whatColor.equalsIgnoreCase("White")) {
+            color = true;
+        }
+        else if (whatColor.equalsIgnoreCase("Black")) {
+            color = false;
+        }
+        
+        String coordinate = javax.swing.JOptionPane.showInputDialog("Where would you like to add it?");
         int[] coordinates = determineCoordinate(coordinate);
+        
         int x = coordinates[0];
         int y = coordinates[1];
-        
+
         if (pieceType.equalsIgnoreCase("Pawn")) {
-            piece = new Pawn(x,y);
+            piece = new Pawn(x,y,color);
         }
         else if (pieceType.equalsIgnoreCase("Knight")) {
-            piece = new Knight(x,y);
+            piece = new Knight(x,y,color);
         }
         else if (pieceType.equalsIgnoreCase("Bishop")) {
-            piece = new Bishop(x,y);
+            piece = new Bishop(x,y,color);
         }
         else if (pieceType.equalsIgnoreCase("Rook")) {
-            piece = new Rook(x,y);
+            piece = new Rook(x,y,color);
         }
         else if (pieceType.equalsIgnoreCase("Queen")) {
-            piece = new Queen(x,y);
+            piece = new Queen(x,y,color);
         }
         else if (pieceType.equalsIgnoreCase("King")) {
-            piece = new King(x,y);
+            piece = new King(x,y,color);
         }
         else {
             System.out.println("Sorry, something happened. Try entering a Chess piece.");
             addPiece();
         }   
-        
+
         addPiece(x,y,piece);
     }
-    
+
     private int[] determineCoordinate(String coordinate) {
         int x = 0;
         if ((coordinate.charAt(0) == 'a')) {
@@ -109,7 +121,7 @@ public class Board {
         else if ((coordinate.charAt(0) == 'h')) {
             x = 7;
         }
-        
+
         int y = 0;
         if (coordinate.charAt(1) == '1') {
             y = 0;
@@ -135,18 +147,18 @@ public class Board {
         else if (coordinate.charAt(1) == '8') {
             y = 7;
         }
-        
+
         int[] coordinates = {x,y};
         return coordinates;
     }
-    
+
     // addPiece(x,y,piece) adds a piece to the board at the specified (x,y) location
     private void addPiece(int x, int y, Piece piece) {
         if (piece == null) {
             System.out.println("No piece was added.");
             return;
         }
-        
+
         if ((board[x][y]).isEmpty()) {
             // if the square is empty, set it equal to the specified piece
             board[x][y] = (new Square(x,y,false,piece));
@@ -156,42 +168,69 @@ public class Board {
             return;
         }
     }
-    
+
     public void removePiece(int x, int y) {
+        // simply change "empty" to true, and piece to null
         board[x][y] = (new Square(x,y,true,null));
     }
     
+    public void clearBoard() {
+        initializeBoard();
+    }
+
     public void movePiece(int currentX, int currentY, int moveToX, int moveToY) {
-        if ((board[currentX][currentY]).isEmpty()) {
+        Square current = board[currentX][currentY];
+        Square desired = board[moveToX][moveToY];
+        
+        Piece currentPiece = current.getPiece();
+        Piece desiredPiece = desired.getPiece();
+
+        if (current.isEmpty()) {
             System.out.println("\n" + "There's no piece on that square." + "\n");
             return;
         }
-        
-        // pawns
-        if ((board[currentX][currentY]).getPiece() instanceof Pawn) {
+
+        // when moving a pawn
+        if (current.getPiece() instanceof Pawn) {
             if (currentX != moveToX) {
                 System.out.println("For now, pawns can only move straight.");
                 return;
             }
-            
-            if (moveToY > currentY + 1) {
-                System.out.println("For now, pawns can't move more than one square at a time.");
-                return;
-            }
             removePiece(currentX,currentY);
-            addPiece(moveToX,moveToY, (new Pawn(moveToX,moveToY)));
+            addPiece(moveToX,moveToY,(new Pawn(moveToX,moveToY,true)));
+        }
+        else if (current.getPiece() instanceof King) {
+
+        }
+        else if (current.getPiece() instanceof Queen) {
+
+        }
+        else if (current.getPiece() instanceof Bishop) {
+
+        }
+        else if (current.getPiece() instanceof Queen) {
+
         }
     }
 
     public void printBoard() {
+        // System.out.print('\u000C');
         String[] alphabet = {"8","7","6","5","4","3","2","1"};
         System.out.println("--------------------------------");
-        
-        int i = 7;
-        for (int x = 0; x < 8; x++, i--) {
-            for (int y = 0; y < 8; y++) {
+
+        int i = 0;
+        for (int x = 7; x >= 0; x--, i++) {
+            for (int y = 0 ; y < 8; y++) {
                 if ((board[y][x]).getPiece() != null) {
-                    System.out.print("| " + (board[y][x]).getPiece() + " ");
+                    if ((board[y][x].getPiece().getColor() == false)) {
+                        // if the piece is black, print it in lowercase
+                        String s = (board[y][x]).getPiece().toString();
+                        System.out.print("| " + s.toLowerCase() + " ");
+                    }
+                    else {
+                        // otherwise, print it normally (in uppercase)
+                        System.out.print("| " + (board[y][x]).getPiece() + " ");
+                    }
                 }
                 else {
                     System.out.print("|  " + " ");

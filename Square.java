@@ -1,8 +1,11 @@
+import javafx.util.Pair;
 public class Square
 {
     // piece stores what Piece occupies the square
     private Piece piece;
     
+    // plot stores the point (x,y);
+    private Pair<Integer,Integer> point;
     // x,y are the coordinates for the square
     private int x,y;
     
@@ -15,6 +18,8 @@ public class Square
         this.y = y;
         this.empty = empty;
         
+        point = new Pair<>(x,y);
+        
         // this is to ensure that no piece can occupy an empty square
         if (empty == true) {
             piece = null;
@@ -22,6 +27,18 @@ public class Square
         else {
             this.piece = piece;
         }
+    }
+    
+    public int getX() {
+        return x;
+    }
+    
+    public int getY() {
+        return y;
+    }
+    
+    public Pair<Integer,Integer> getPoint() {
+        return point;
     }
 
     public Piece getPiece() {
