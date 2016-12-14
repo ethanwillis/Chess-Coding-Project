@@ -214,7 +214,6 @@ public class Board {
     }
 
     public void printBoard() {
-        // System.out.print('\u000C');
         String[] alphabet = {"8","7","6","5","4","3","2","1"};
         System.out.println("--------------------------------");
 
@@ -240,5 +239,33 @@ public class Board {
             System.out.println("--------------------------------");
         }
         System.out.println("  a   b   c   d   e   f   g   h  ");
+    }
+    
+    public void printFlippedBoard() {
+        String[] alphabet = {"8","7","6","5","4","3","2","1"};
+        System.out.println("--------------------------------");
+
+        int i = 7;
+        for (int x = 0; x < 8; x++, i--) {
+            for (int y = 7 ; y >= 0; y--) {
+                if ((board[y][x]).getPiece() != null) {
+                    if ((board[y][x].getPiece().getColor() == false)) {
+                        // if the piece is black, print it in lowercase
+                        String s = (board[y][x]).getPiece().toString();
+                        System.out.print("| " + s.toLowerCase() + " ");
+                    }
+                    else {
+                        // otherwise, print it normally (in uppercase)
+                        System.out.print("| " + (board[y][x]).getPiece() + " ");
+                    }
+                }
+                else {
+                    System.out.print("|  " + " ");
+                }
+            }
+            System.out.println("  " + alphabet[i] + " ");
+            System.out.println("--------------------------------");
+        }
+        System.out.println("  h   g   f   e   d   c   b   a  ");
     }
 }
