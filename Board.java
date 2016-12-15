@@ -1,5 +1,4 @@
 import java.util.Scanner;
-import javafx.util.Pair;
 public class Board {    
     private Square[][] board = new Square[8][8];
 
@@ -52,9 +51,9 @@ public class Board {
     public void addPiece() {
         Piece piece = null;
         boolean color = false;
-        
+
         String pieceType = javax.swing.JOptionPane.showInputDialog("What piece would you like to add?");
-        
+
         String whatColor = javax.swing.JOptionPane.showInputDialog("What color?");
         if (whatColor.equalsIgnoreCase("White")) {
             color = true;
@@ -62,10 +61,10 @@ public class Board {
         else if (whatColor.equalsIgnoreCase("Black")) {
             color = false;
         }
-        
+
         String coordinate = javax.swing.JOptionPane.showInputDialog("Where would you like to add it?");
         int[] coordinates = determineCoordinate(coordinate);
-        
+
         int x = coordinates[0];
         int y = coordinates[1];
 
@@ -88,13 +87,15 @@ public class Board {
             piece = new King(x,y,color);
         }
         else {
-            System.out.println("Sorry, something happened. Try entering a Chess piece.");
+            System.out.println("Sorry, an error occurred. Try entering a Chess piece.");
             addPiece();
         }   
 
         addPiece(x,y,piece);
     }
 
+    // determineCoordinate(coordinate) takes as input a String that is the format of Chess notation (ex: a4, b6, or c2)
+    // and returns an array that contains the x and y value of the matching coordinate
     private int[] determineCoordinate(String coordinate) {
         int x = 0;
         if ((coordinate.charAt(0) == 'a')) {
@@ -173,7 +174,7 @@ public class Board {
         // simply change "empty" to true, and piece to null
         board[x][y] = (new Square(x,y,true,null));
     }
-    
+
     public void clearBoard() {
         initializeBoard();
     }
@@ -181,91 +182,106 @@ public class Board {
     public void movePiece(int currentX, int currentY, int moveToX, int moveToY) {
         Square current = board[currentX][currentY];
         Square desired = board[moveToX][moveToY];
-        
-        Piece currentPiece = current.getPiece();
-        Piece desiredPiece = desired.getPiece();
 
         if (current.isEmpty()) {
             System.out.println("\n" + "There's no piece on that square." + "\n");
             return;
         }
 
-        // when moving a pawn
+        boolean color = current.getPiece().getColor();
         if (current.getPiece() instanceof Pawn) {
             if (currentX != moveToX) {
-                System.out.println("For now, pawns can only move straight.");
+                System.out.println("Pawns can only move straight except when capturing pieces.");
                 return;
             }
             removePiece(currentX,currentY);
-            addPiece(moveToX,moveToY,(new Pawn(moveToX,moveToY,true)));
+            addPiece(moveToX,moveToY,(new Pawn(moveToX,moveToY,color)));
         }
         else if (current.getPiece() instanceof King) {
-
+            removePiece(currentX,currentY);
+            addPiece(moveToX,moveToY,(new King(moveToX,moveToY,color)));
         }
         else if (current.getPiece() instanceof Queen) {
-
+            removePiece(currentX,currentY);
+            addPiece(moveToX,moveToY,(new Queen(moveToX,moveToY,color)));
         }
         else if (current.getPiece() instanceof Bishop) {
-
+            removePiece(currentX,currentY);
+            addPiece(moveToX,moveToY,(new Bishop(moveToX,moveToY,color)));
         }
-        else if (current.getPiece() instanceof Queen) {
-
+        else if (current.getPiece() instanceof Knight) {
+            removePiece(currentX,currentY);
+            addPiece(moveToX,moveToY,(new Knight(moveToX,moveToY,color)));
+        }
+        else if (current.getPiece() instanceof Rook) {
+            removePiece(currentX,currentY);
+            addPiece(moveToX,moveToY,(new Rook(moveToX,moveToY,color)));
         }
     }
 
-    public void printBoard() {
-        String[] alphabet = {"8","7","6","5","4","3","2","1"};
-        System.out.println("--------------------------------");
+    public void printBoard(boolean color) {
+        // print from white's perspective
+        if (color == true) {
+            System.out.println();
+            String[] alphabet = {"8","7","6","5","4","3","2","1"};
+            System.out.println("\t" + "     BLACK" + "\t");
+            System.out.println("--------------------------------");
 
-        int i = 0;
-        for (int x = 7; x >= 0; x--, i++) {
-            for (int y = 0 ; y < 8; y++) {
-                if ((board[y][x]).getPiece() != null) {
-                    if ((board[y][x].getPiece().getColor() == false)) {
-                        // if the piece is black, print it in lowercase
-                        String s = (board[y][x]).getPiece().toString();
-                        System.out.print("| " + s.toLowerCase() + " ");
+            int i = 0;
+            for (int x = 7; x >= 0; x--, i++) {
+                for (int y = 0 ; y < 8; y++) {
+                    if ((board[y][x]).getPiece() != null) {
+                        if ((board[y][x].getPiece().getColor() == false)) {
+                            // if the piece is black, print it in lowercase
+                            String s = (board[y][x]).getPiece().toString();
+                            System.out.print("| " + s.toLowerCase() + " ");
+                        }
+                        else {
+                            // otherwise, print it normally (in uppercase)
+                            System.out.print("| " + (board[y][x]).getPiece() + " ");
+                        }
                     }
                     else {
-                        // otherwise, print it normally (in uppercase)
-                        System.out.print("| " + (board[y][x]).getPiece() + " ");
+                        System.out.print("|  " + " ");
                     }
                 }
-                else {
-                    System.out.print("|  " + " ");
-                }
+                System.out.println("  " + alphabet[i] + " ");
+                System.out.println("--------------------------------");
             }
-            System.out.println("  " + alphabet[i] + " ");
-            System.out.println("--------------------------------");
+            System.out.println("  a   b   c   d   e   f   g   h  ");
+            System.out.println("\t" + "     WHITE" + "\t");
+            System.out.println();
         }
-        System.out.println("  a   b   c   d   e   f   g   h  ");
-    }
-    
-    public void printFlippedBoard() {
-        String[] alphabet = {"8","7","6","5","4","3","2","1"};
-        System.out.println("--------------------------------");
+        else if (color == false) {
+            System.out.println();
+            String[] alphabet = {"8","7","6","5","4","3","2","1"};
+            System.out.println("\t" + "     WHITE" + "\t");
+            System.out.println("--------------------------------");
 
-        int i = 7;
-        for (int x = 0; x < 8; x++, i--) {
-            for (int y = 7 ; y >= 0; y--) {
-                if ((board[y][x]).getPiece() != null) {
-                    if ((board[y][x].getPiece().getColor() == false)) {
-                        // if the piece is black, print it in lowercase
-                        String s = (board[y][x]).getPiece().toString();
-                        System.out.print("| " + s.toLowerCase() + " ");
+            int i = 7;
+            for (int x = 0; x < 8; x++, i--) {
+                for (int y = 7 ; y >= 0; y--) {
+                    if ((board[y][x]).getPiece() != null) {
+                        if ((board[y][x].getPiece().getColor() == false)) {
+                            // if the piece is black, print it in lowercase
+                            String s = (board[y][x]).getPiece().toString();
+                            System.out.print("| " + s.toLowerCase() + " ");
+                        }
+                        else {
+                            // otherwise, print it normally (in uppercase)
+                            System.out.print("| " + (board[y][x]).getPiece() + " ");
+                        }
                     }
                     else {
-                        // otherwise, print it normally (in uppercase)
-                        System.out.print("| " + (board[y][x]).getPiece() + " ");
+                        System.out.print("|  " + " ");
                     }
                 }
-                else {
-                    System.out.print("|  " + " ");
-                }
+                System.out.println("  " + alphabet[i] + " ");
+                System.out.println("--------------------------------");
             }
-            System.out.println("  " + alphabet[i] + " ");
-            System.out.println("--------------------------------");
+            System.out.println("  h   g   f   e   d   c   b   a  ");
+            System.out.println("\t" + "     BLACK" + "\t");
+            System.out.println();
         }
-        System.out.println("  h   g   f   e   d   c   b   a  ");
     }
 }

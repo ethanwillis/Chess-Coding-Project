@@ -4,13 +4,13 @@ public class Square
     // piece stores what Piece occupies the square
     private Piece piece;
     
-    // plot stores the point (x,y);
+    // point stores the point (x,y);
     private Pair<Integer,Integer> point;
+    
     // x,y are the coordinates for the square
     private int x,y;
     
-    // empty is true when the square is empty
-    // (i.e. no piece occupies the square)
+    // empty is true when the square is empty (i.e. no piece occupies the square)
     private boolean empty;
     
     public Square(int x, int y, boolean empty, Piece piece) {
@@ -41,10 +41,12 @@ public class Square
         return point;
     }
 
+    // getPiece() returns the Piece at the calling Square
     public Piece getPiece() {
         return piece;
     }
 
+    // isEmpty() returns true if the calling Square is empty, false if the calling Square is occupied by a Piece
     public boolean isEmpty() {
         return empty;
     }

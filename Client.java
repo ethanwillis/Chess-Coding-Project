@@ -13,34 +13,37 @@ public class Client {
         board.setupBoard();
         
         do {
+            // set the persective view of the board to white initially
+            boolean color = true;
+            
             System.out.println("What would you like to do?");
-            System.out.println("1 Add a piece, 2 Move a piece, 3 Display the Board, 4 Clear the Board, 5 Setup starting position, 6 Terminate");
+            System.out.println("1 Add a piece, 2 Move a piece, 3 Flip the Board, 4 Clear the Board, 5 Setup starting position, 6 Terminate");
             int input = s.nextInt();
             
             if (input == 1) {
                 board.addPiece();
-                board.printBoard();
+                board.printBoard(color);
             }
             else if (input == 2) {
                 // board.movePiece();
             }
             else if (input == 3) {
-                System.out.println("Who's perspective? (White or Black)");
-                String color = s.next();
-                if (color.equalsIgnoreCase("White")) {
-                    board.printBoard();
+                // if the color was initially set to White's view, change it to Black's and vice versa
+                if (color == true) {
+                    color = false;
                 }
-                else if (color.equalsIgnoreCase("Black")) {
-                    board.printFlippedBoard();
+                else if (color == false) {
+                    color = true;
                 }
+                board.printBoard(color);
             }
             else if (input == 4) {
                 board.clearBoard();
-                board.printBoard();
+                board.printBoard(color);
             }
             else if (input == 5) {
                 board.setupBoard();
-                board.printBoard();
+                board.printBoard(color);
             }
             else if (input == 6) {
                 return;
@@ -58,7 +61,9 @@ public class Client {
         System.out.println("1. White's pieces are uppercase, and Black's pieces are lowercase.");
         System.out.println("2. Currently, there is no way to capture a piece (i.e. move a piece onto an occupied square)");
         
-        board.printBoard();
+        // print the empty board from white's perspective initially
+        board.printBoard(true);
+    
         play();
         
         System.out.println();
