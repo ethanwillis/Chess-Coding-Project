@@ -10,10 +10,10 @@ public class Client {
         
         Scanner s = new Scanner(System.in);
         
-        do {
-            // set the persective view of the board to white initially
-            boolean color = true;
-            
+        // set the persective view of the board to white initially
+        boolean color = true;
+        
+        do {            
             System.out.println("What would you like to do?");
             System.out.println("1 Add a piece, 2 Move a piece, 3 Flip the Board, 4 Clear the Board, 5 Setup starting position, 6 Terminate");
             int input = s.nextInt();
