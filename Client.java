@@ -10,8 +10,6 @@ public class Client {
         
         Scanner s = new Scanner(System.in);
         
-        board.setupBoard();
-        
         do {
             // set the persective view of the board to white initially
             boolean color = true;
@@ -28,13 +26,8 @@ public class Client {
                 // board.movePiece();
             }
             else if (input == 3) {
-                // if the color was initially set to White's view, change it to Black's and vice versa
-                if (color == true) {
-                    color = false;
-                }
-                else if (color == false) {
-                    color = true;
-                }
+                // if the color was initially set to White's view, change it to Black's and vice versa                
+                color = !color;
                 board.printBoard(color);
             }
             else if (input == 4) {
