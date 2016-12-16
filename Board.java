@@ -18,12 +18,14 @@ public class Board {
 
     // setupBoard() puts the pieces in their original starting positions
     public void setupBoard() {
+        clearBoard();
+       
         // first, the pawns
         for (int x = 0; x < 8; x++) {
             // for white
             board[x][1] = (new Square(x,1,false,(new Pawn(x,1,true))));
             // for black
-            board[x][6] = (new Square(x,1,false,(new Pawn(x,6,false))));
+            board[x][6] = (new Square(x,6,false,(new Pawn(x,6,false))));
         }
 
         // white's other pieces
@@ -55,10 +57,10 @@ public class Board {
         String pieceType = javax.swing.JOptionPane.showInputDialog("What piece would you like to add?");
 
         String whatColor = javax.swing.JOptionPane.showInputDialog("What color?");
-        if (whatColor.equalsIgnoreCase("White")) {
+        if (whatColor.equalsIgnoreCase("White") || whatColor.equalsIgnoreCase("W")) {
             color = true;
         }
-        else if (whatColor.equalsIgnoreCase("Black")) {
+        else if (whatColor.equalsIgnoreCase("Black") || whatColor.equalsIgnoreCase("B")) {
             color = false;
         }
 
@@ -68,22 +70,22 @@ public class Board {
         int x = coordinates[0];
         int y = coordinates[1];
 
-        if (pieceType.equalsIgnoreCase("Pawn")) {
+        if (pieceType.equalsIgnoreCase("Pawn") || pieceType.equalsIgnoreCase("P")) {
             piece = new Pawn(x,y,color);
         }
-        else if (pieceType.equalsIgnoreCase("Knight")) {
+        else if (pieceType.equalsIgnoreCase("Knight") || pieceType.equalsIgnoreCase("N")) {
             piece = new Knight(x,y,color);
         }
-        else if (pieceType.equalsIgnoreCase("Bishop")) {
+        else if (pieceType.equalsIgnoreCase("Bishop") || pieceType.equalsIgnoreCase("B")) {
             piece = new Bishop(x,y,color);
         }
-        else if (pieceType.equalsIgnoreCase("Rook")) {
+        else if (pieceType.equalsIgnoreCase("Rook") || pieceType.equalsIgnoreCase("R")) {
             piece = new Rook(x,y,color);
         }
-        else if (pieceType.equalsIgnoreCase("Queen")) {
+        else if (pieceType.equalsIgnoreCase("Queen") || pieceType.equalsIgnoreCase("Q")) {
             piece = new Queen(x,y,color);
         }
-        else if (pieceType.equalsIgnoreCase("King")) {
+        else if (pieceType.equalsIgnoreCase("King") || pieceType.equalsIgnoreCase("K")) {
             piece = new King(x,y,color);
         }
         else {
@@ -159,6 +161,12 @@ public class Board {
             System.out.println("No piece was added.");
             return;
         }
+        
+        // if the user tries to add a pawn to rank 1 or rank 8, tell him that he can't do that
+        if ((piece instanceof Pawn) && ((y == 7) || (y == 0))) {
+            System.err.println("You cannot add a pawn to the rank " + y + ".");
+            return;
+        }
 
         if ((board[x][y]).isEmpty()) {
             // if the square is empty, set it equal to the specified piece
@@ -178,20 +186,67 @@ public class Board {
     public void clearBoard() {
         initializeBoard();
     }
+    
+    // Wrapper for movePiece(currentX,currentY,moveToX,moveToY)
+    // movePiece() asks the user to enter a move in the format: Ke1-e2
+    public void movePiece() {
+        // "move" must be in the format of piece, current location of that piece, and where to move that piece
+        // (ex: the String "Ke1-e2" would move the King on e1 to e2)
+        String move = javax.swing.JOptionPane.showInputDialog("Enter the move");
+        
+        // create a String[] where the first index is the current piece and its location
+        // and the second index is the square to move that piece to
+        String[] movement = move.split("-");
+        
+        String currentPiece = movement[0];
+        String moveToHere = movement[1];
+        
+        int[] currentPieceCoordinate,moveToHereCoordinate;
+        
+        if (move.charAt(0) != 'K' && move.charAt(0) != 'Q' && move.charAt(0) != 'B' && move.charAt(0) != 'R' && move.charAt(0) != 'N') {
+            // if the String move does not specify a piece to move, the user must want to move a pawn
+            // (ex: the user could enter d2-d4; no piece is specified so it must be a pawn) <-- Algebraic Chess Notation
+            
+            // get the (x,y) coordinate of the piece you want to move
+            currentPieceCoordinate = determineCoordinate(currentPiece);
+        }
+        // if the user did specify a piece
+        else {
+            // get the (x,y) coordinate of the piece you want to move
+            // we must delete the piece type (K,Q,B,R,N) from "move" in order to find the coordinate 
+            currentPieceCoordinate = determineCoordinate(currentPiece.substring(1,currentPiece.length()));
+        }
+        
+        // get the (x,y) coordinate of the square you want to move that piece to
+        moveToHereCoordinate = determineCoordinate(moveToHere);
+        
+        int currentX = currentPieceCoordinate[0];
+        int currentY = currentPieceCoordinate[1];
+        int moveToX = moveToHereCoordinate[0];
+        int moveToY = moveToHereCoordinate[1];
+        
+        // now move the piece
+        movePiece(currentX,currentY,moveToX,moveToY);
+    }
 
-    public void movePiece(int currentX, int currentY, int moveToX, int moveToY) {
+    private void movePiece(int currentX, int currentY, int moveToX, int moveToY) {
         Square current = board[currentX][currentY];
         Square desired = board[moveToX][moveToY];
 
         if (current.isEmpty()) {
-            System.out.println("\n" + "There's no piece on that square." + "\n");
+            System.err.println("There's no piece on " + current.getNotation() + ".");
+            return;
+        }
+        
+        if (desired.isEmpty() == false) {
+            System.err.println("As of right now, you cannot capture any pieces.");
             return;
         }
 
         boolean color = current.getPiece().getColor();
         if (current.getPiece() instanceof Pawn) {
             if (currentX != moveToX) {
-                System.out.println("Pawns can only move straight except when capturing pieces.");
+                System.err.println("Pawns can only move straight except when capturing pieces.");
                 return;
             }
             removePiece(currentX,currentY);
@@ -220,7 +275,8 @@ public class Board {
     }
 
     public void printBoard(boolean color) {
-        // print from white's perspective
+        // printBoard(color) prints from White's perspective when color is true 
+        // and prints from Black's perspective when color is false
         if (color == true) {
             System.out.println();
             String[] alphabet = {"8","7","6","5","4","3","2","1"};
